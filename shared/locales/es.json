@@ -1,0 +1,29 @@
+{
+    "FRIENDSHIP": "AMISTAD",
+
+    "REQUEST_PENDING": "Hay una solicitud pendiente para este usuario, por favor espera.",
+    "REQUEST_ACCEPTED": "¡%s ahora es tu amigo/a!",
+    "REQUEST_ALREADY_FRIEND": "Ya eres amigo/a de este jugador.",
+    "REQUEST_TIMEOUT": "Por favor espera antes de realizar esta acción nuevamente.",
+    "REQUEST_CANCEL_FRIENDSHIP": "Cancelando Amistad",
+    "REQUEST_CANCEL_FRIENDSHIP_TEXT": "¿Estás seguro/a de que quieres cancelar la amistad?",
+    "REQUEST_CANCEL_SUCCESS": "¡Amigo/a eliminado/a!",
+    "REQUEST_INVITATION": "¡Hola! %s quiere ser tu amigo/a.",
+    "REQUEST_SENDED": "¡Solicitud de amistad enviada!",
+    "REQUEST_MYSELF": "No puedes ser tu propio amigo :c",
+    "REQUEST_TIMEOUT_CANCELED": "Esta amistad ha sido cancelada por tiempo de espera.",
+    "REQUEST_PENDING_CONTROL_ACTION": "Tienes una nueva solicitud de amistad de #%s [Y] - Aceptar | [R] - Rechazar",
+
+    "UNKNOWN": "Desconocido",
+
+    "REQUEST_FRIENDSHIP": "Solicitar Amistad",
+    "CANCEL_FRIENDSHIP": "Cancelar Amistad",
+
+    "FRIEND_COUNT": "¡Tienes %s amigos/as!",
+    "MENU_INPUT_TITLE": "Solicitud de Amistad",
+    "MENU_INPUT_LABEL": "ID del Jugador",
+    "MENU_INPUT_DESCRIPTION": "Usa el ID del jugador en el servidor",
+
+    "PLAYER_NOT_FOUND": "No se encontró el ID del jugador",
+    "PLAYER_NOT_IN_AREA": "El jugador no está en el área."
+}

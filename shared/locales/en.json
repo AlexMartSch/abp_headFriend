@@ -1,0 +1,30 @@
+{
+    "FRIENDSHIP": "FRIENDSHIP",
+
+    "REQUEST_PENDING": "There is a pending request for this user, please wait.",
+    "REQUEST_ACCEPTED": "%s is now your friend!",
+    "REQUEST_ALREADY_FRIEND": "You are already friends with this player.",
+    "REQUEST_TIMEOUT": "Please wait before performing this action again.",
+    "REQUEST_CANCEL_FRIENDSHIP": "Canceling Friendship",
+    "REQUEST_CANCEL_FRIENDSHIP_TEXT": "Are you sure you want to cancel the friendship?",
+    "REQUEST_CANCEL_SUCCESS": "Friend removed!",
+    "REQUEST_INVITATION": "Hello! %s want to be your friend!",
+    "REQUEST_SENDED": "Friendship requested!",
+    "REQUEST_MYSELF": "You cannot be your own friend :c",
+    "REQUEST_TIMEOUT_CANCELED": "This friendship has been canceled by timeout.",
+    "REQUEST_PENDING_CONTROL_ACTION": "You have new friend request from #%s [Y] - Accept | [R] - Reject",
+
+    "UNKNOWN": "Unknown",
+
+    "REQUEST_FRIENDSHIP": "Request Friendship",
+    "CANCEL_FRIENDSHIP": "Cancel Friendship",
+
+
+    "FRIEND_COUNT": "You have %s friends!",
+    "MENU_INPUT_TITLE": "Friendship Request",
+    "MENU_INPUT_LABEL": "Player Target",
+    "MENU_INPUT_DESCRIPTION": "Use player server id",
+
+    "PLAYER_NOT_FOUND": "PlayerID Not found",
+    "PLAYER_NOT_IN_AREA": "Player not in area."
+}
