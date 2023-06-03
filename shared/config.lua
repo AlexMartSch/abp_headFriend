@@ -81,10 +81,11 @@ Config.FriendAPI_KeyToCancel = 45
 Config.FriendAPI_HeadUnknownText = true
 Config.FriendAPI_HeadViewDistance = 10
 
---Config.FriendAPI_UseRadialMenu = true
---Config.FriendAPI_UseTextUI = true
-Config.FriendAPI_UseOxTarget = true
+--- Select a Target Resource 
+-- 'ox' : OxTarget
+-- 'qb' : QbTarget
+--- IMPORTANT: OxLib always is required but PolyZone is required only to QBTarget.
+Config.FriendAPI_TargetResource = 'qb'
 
 -- A quick wait filter after performing an action, is in seconds.
 Config.FriendAPI_AntiSpamTimer = 5
-
