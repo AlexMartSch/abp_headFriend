@@ -204,6 +204,53 @@ if Config.FriendMenu_CommandEnabled then
     end)
 end
 
+local function isEntityFriendOfMe(entity, checkDistance)
+    local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
+    local distanceCheck = (checkDistance and (checkDistance < 2 and true or false) or true)
+    local isFriendOf = areFriends(targetPlayer) and true or false
+    return isFriendOf, distanceCheck 
+end
+
+local function makeFriendRequest(entity)
+    local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
+    local success, playerHeadText, identifier = lib.callback.await('abp_headFriend:RequestFriendship', false, targetPlayer)
+
+    if success then
+        FriendAPI.Friends[targetPlayer] = {headtext = playerHeadText, source = targetPlayer, identifier = identifier}
+        if Config.UseKVPInsteadDatabase then
+            SetResourceKvp('friendships', json.encode(FriendAPI.Friends))
+        end
+    end
+end
+
+local function makeCancelfriendshipRequest(entity)
+    local alert = lib.alertDialog({
+        header = Translate("REQUEST_CANCEL_FRIENDSHIP"),
+        content = Translate("REQUEST_CANCEL_FRIENDSHIP_TEXT"),
+        centered = true,
+        cancel = true
+    })
+
+    if alert == "confirm" then
+        local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
+        local success = lib.callback.await('abp_headFriend:CancelFriendship', false, areFriends(targetPlayer).friendshipId, targetPlayer)
+
+        if success then
+            removeFriend(targetPlayer)
+
+            if Config.UseKVPInsteadDatabase then
+                SetResourceKvp('friendships', json.encode(FriendAPI.Friends))
+            end
+
+            lib.notify({
+                title = Translate("FRIENDSHIP"),
+                description = Translate("REQUEST_CANCEL_SUCCESS"),
+                type = "success"
+            })
+        end
+    end
+end
+
 if Config.FriendAPI_TargetResource == 'qb' then
     local targeting = exports['qb-target']
 
@@ -213,58 +260,22 @@ if Config.FriendAPI_TargetResource == 'qb' then
                 icon = "fas fa-hand",
                 label = Translate("REQUEST_FRIENDSHIP"),
                 action = function(entity)
-                    local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    local success, playerHeadText, identifier = lib.callback.await('abp_headFriend:RequestFriendship', false, targetPlayer)
-    
-                    if success then
-                        FriendAPI.Friends[targetPlayer] = {headtext = playerHeadText, source = targetPlayer, identifier = identifier}
-                        if Config.UseKVPInsteadDatabase then
-                            SetResourceKvp('friendships', json.encode(FriendAPI.Friends))
-                        end
-                    end
+                    makeFriendRequest(entity)
                 end,
                 canInteract = function(entity, distance, data)
-                    local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    local isFriendOf = areFriends(targetPlayer) and true or false
-                    print(2,isFriendOf)
-                    return not isFriendOf
+                    local isFriendOf, distanceCheck = isEntityFriendOfMe(entity, distance)
+                    return not isFriendOf and distanceCheck
                 end
             },
             {
                 icon = "fas fa-hand",
                 label = Translate("CANCEL_FRIENDSHIP"),
                 action = function(entity)
-                    local alert = lib.alertDialog({
-                        header = Translate("REQUEST_CANCEL_FRIENDSHIP"),
-                        content = Translate("REQUEST_CANCEL_FRIENDSHIP_TEXT"),
-                        centered = true,
-                        cancel = true
-                    })
-    
-                    if alert == "confirm" then
-                        local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                        local success = lib.callback.await('abp_headFriend:CancelFriendship', false, areFriends(targetPlayer).friendshipId, targetPlayer)
-    
-                        if success then
-                            removeFriend(targetPlayer)
-    
-                            if Config.UseKVPInsteadDatabase then
-                                SetResourceKvp('friendships', json.encode(FriendAPI.Friends))
-                            end
-    
-                            lib.notify({
-                                title = Translate("FRIENDSHIP"),
-                                description = Translate("REQUEST_CANCEL_SUCCESS"),
-                                type = "success"
-                            })
-                        end
-                    end
+                    makeCancelfriendshipRequest(entity)
                 end,
                 canInteract = function(entity)
-                    local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    local isFriendOf = areFriends(targetPlayer) and true or false
-                    print(1,isFriendOf)
-                    return isFriendOf
+                    local isFriendOf, distanceCheck = isEntityFriendOfMe(entity, distance)
+                    return isFriendOf and distanceCheck
                 end
             },
         },
@@ -279,65 +290,22 @@ if Config.FriendAPI_TargetResource == "ox" then
             icon = "fas fa-hand",
             label = Translate("REQUEST_FRIENDSHIP"),
             onSelect = function(data)
-                local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(data.entity))
-                local success, playerHeadText, identifier = lib.callback.await('abp_headFriend:RequestFriendship', false, targetPlayer)
-
-                if success then
-                    FriendAPI.Friends[targetPlayer] = {headtext = playerHeadText, source = targetPlayer, identifier = identifier}
-                    if Config.UseKVPInsteadDatabase then
-                        SetResourceKvp('friendships', json.encode(FriendAPI.Friends))
-                    end
-                end
+                makeFriendRequest(data.entity)
             end,
             canInteract = function(entity, distance, coords, name)
-                local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                local distanceCheck = distance < 2 and true or false
-                local isFriendOf = areFriends(targetPlayer) and true or false
-                return distanceCheck and not isFriendOf
+                local isFriendOf, distanceCheck = isEntityFriendOfMe(entity, distance)
+                    return not isFriendOf and distanceCheck
             end
         },
         {
             icon = "fas fa-hand",
             label = Translate("CANCEL_FRIENDSHIP"),
             onSelect = function(data)
-
-                local alert = lib.alertDialog({
-                    header = Translate("REQUEST_CANCEL_FRIENDSHIP"),
-                    content = Translate("REQUEST_CANCEL_FRIENDSHIP_TEXT"),
-                    centered = true,
-                    cancel = true
-                })
-
-                if alert == "confirm" then
-                    local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(data.entity))
-                    local success = lib.callback.await('abp_headFriend:CancelFriendship', false, areFriends(targetPlayer).friendshipId, targetPlayer)
-
-                    if success then
-                        removeFriend(targetPlayer)
-
-                        if Config.UseKVPInsteadDatabase then
-                            SetResourceKvp('friendships', json.encode(FriendAPI.Friends))
-                        end
-
-                        lib.notify({
-                            title = Translate("FRIENDSHIP"),
-                            description = Translate("REQUEST_CANCEL_SUCCESS"),
-                            type = "success"
-                        })
-                    end
-                end
-
-                
+                makeCancelfriendshipRequest(data.entity)
             end,
             canInteract = function(entity, distance, coords, name)
-                if IsPedAPlayer(entity) then
-                    local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-                    local distanceCheck = distance < 2 and true or false
-                    local isFriendOf = areFriends(targetPlayer) and true or false
-                    return distanceCheck and isFriendOf
-                end
-
-                return false
+                local isFriendOf, distanceCheck = isEntityFriendOfMe(entity, distance)
+                return isFriendOf and distanceCheck
             end
         },
     })
