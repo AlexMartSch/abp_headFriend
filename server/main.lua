@@ -1,4 +1,4 @@
-
+local adminModeList = {}
 
 local getUserId = function(source)
     local result = nil
@@ -14,6 +14,19 @@ local getUserId = function(source)
     end
 
     return tostring(result)
+end
+
+local getUserIds = function(source)
+    local result = {}
+    for k, v in pairs(GetPlayerIdentifiers(source)) do
+        if string.sub(v, 1, string.len("steam:")) == "steam:" then
+            result['steam'] = v
+        elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
+            result['discord'] = v
+        end
+    end
+
+    return result
 end
 
 local checkIfAdmin = function(source)
@@ -36,59 +49,6 @@ local checkIfAdmin = function(source)
         return isAdmin(source)
     end
 end
-
-
-
--- if Config.EnableAdminCommandUsage then
---     lib.addCommand(Config.AdminCommandName, {
---         help = 'Admin Friend System',
---         params = {
---             {
---                 name = 'option',
---                 type = 'string',
---                 help = 'Target player\'s server id', 
---             },
---             {
---                 name = 'argument',
---                 type = 'string',
---                 help = 'Name of the item to give',
---                 optional = true
---             },
---         },
---         restricted = 'group.admin'
---     }, function(source, args, raw)
-        
-
-
---     end)
--- end
-
-
-local getUserIds = function(source)
-    local result = {}
-    for k, v in pairs(GetPlayerIdentifiers(source)) do
-        if string.sub(v, 1, string.len("steam:")) == "steam:" then
-            result['steam'] = v
-        elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
-            result['discord'] = v
-        end
-    end
-
-    return result
-end
-
--- local findPlayer = function(steamid)
---     local src = nil
-
---     for _, player in pairs(GetPlayers()) do
---         if getUserIds(player).steam == steamid then
---             src = player
---             break
---         end
---     end
-
---     return src
--- end
 
 --- Friend API
 
@@ -168,6 +128,24 @@ FriendAPI.UpdateFriendRequest = function(id)
 
     return false
 end
+
+
+
+lib.callback.register('abp_headFriend:tryRegisterStaffMode', function(source) 
+    if checkIfAdmin(source) then
+        local existRecord = adminModeList[source]
+        if existRecord then
+            adminModeList[source] = not adminModeList[source]
+        else
+            adminModeList[source] = true
+        end
+
+        TriggerClientEvent('abp_headFriend::SyncAdminMode', -1, adminModeList)
+        return true, adminModeList
+    end
+
+    return false, {}
+end)
 
 lib.callback.register('abp_headFriend:CancelFriendship', function(source, friendshipId, targetPlayer) 
     if not Config.UseKVPInsteadDatabase then
@@ -281,6 +259,8 @@ RegisterNetEvent('abp_headFriend::RegisterPlayer', function()
         headtext   = getUserHeadName(src),
         source     = src
     }
+
+    TriggerClientEvent('abp_headFriend::SyncAdminMode', src, adminModeList)
 end)
 
 

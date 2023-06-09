@@ -4,7 +4,11 @@ local FriendAPI = {}
 FriendAPI.Friends = kvp and json.decode(kvp) or {}
 FriendAPI.NearPlayers = {}
 FriendAPI.ShowHeadText = true
+FriendAPI.CurrentAdmins = {}
 
+local isPlayerInAdminMode = function(playerSource)
+    return FriendAPI.CurrentAdmins[playerSource]
+end
 
 local getFriendsCount = function()
     local counter = 0
@@ -55,6 +59,37 @@ local refreshKVPList = function(playersCache)
     end
 end
 
+local pedHasMask = function(targetPed)
+    local hasMask = false
+    local playerHelmetVariation = GetPedDrawableVariation(targetPed, 1)
+
+    if not Config.MaskAdvancedValidationAlgorithm then
+        if playerHelmetVariation >= 1 then
+            hasMask = true
+        end
+    else
+        for k, v in ipairs(Config.MaskAllowedList) do
+            if type(v) == 'number' then
+                hasMask = v == playerHelmetVariation
+            else
+                local _hasMask = false
+                for i = v[1], v[2] do
+                    hasMask = i == playerHelmetVariation
+                    if hasMask then
+                        break
+                    end
+                end
+            end
+
+            if hasMask then
+                break
+            end
+        end
+     end
+
+     return hasMask
+end
+
 RegisterNetEvent('abp_headFriend:notify', function(data) 
     lib.notify(data)
 end)
@@ -68,12 +103,24 @@ RegisterNetEvent('abp_headFriend:OnCanceledFriendship', function(targetPlayer)
     SetResourceKvp('friendships', json.encode(FriendAPI.Friends))
 end)
 
-if Config.HideNamesCommandEnabled then
+RegisterNetEvent('abp_headFriend::SyncAdminMode', function(adminModeList) 
+    FriendAPI.CurrentAdmins = adminModeList
+end)
 
+if Config.HideNamesCommandEnabled then
     RegisterCommand(Config.HideNamesCommand, function(source) 
         FriendAPI.ShowHeadText = not FriendAPI.ShowHeadText
     end)
-    
+end
+
+if Config.EnableAdminMode then
+    RegisterCommand(Config.AdminModeCommandName, function(source) 
+        local success, adminModeList = lib.callback.await('abp_headFriend:tryRegisterStaffMode', false)
+
+        if success then
+            FriendAPI.CurrentAdmins = adminModeList
+        end
+    end, false)
 end
 
 if Config.FriendMenu_CommandEnabled then
@@ -418,7 +465,7 @@ end)
 CreateThread(function() 
 
     while true do
-        local timeout = 5
+        local timeout = 4
 
         if FriendAPI.ShowHeadText then
             if #FriendAPI.NearPlayers > 0 then
@@ -437,8 +484,18 @@ CreateThread(function()
                             if areFriends then
                                 displayName = areFriends.headtext
                             end
+
+                            if Config.UseMaskValidation then
+                                if pedHasMask(targetPed) then
+                                    displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                end
+                            end
     
                             DrawText3D(x2, y2, z2 + 1.1, 1.5, displayName , 255, 255, 255)
+
+                            if Config.EnableAdminMode and isPlayerInAdminMode(playerServerId) then
+                                DrawText3D(x2, y2, z2 + 1.2, 1.6, Config.AdminModeText , 255, 50, 50)
+                            end
                         end
                     end
                     

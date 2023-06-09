@@ -36,13 +36,16 @@ Config.SyncKVPToClient = 12 -- seconds
 Config.HideNamesCommand = 'hidefriends'
 Config.HideNamesCommandEnabled = true
 
+-- Admin modes is: Set text over your head with a custom 'staff' title.
+Config.EnableAdminMode = true
+Config.AdminModeCommandName = "friendmin"
+Config.AdminModeText = "Staff"
 
--- Config.AdminCommandName = "friends"
--- Config.EnableAdminCommandUsage = true
--- Config.UseAdminList = true
--- Config.AdminSteamList = {
---     "steam:110000108381d36"
--- }
+
+Config.UseAdminList = true
+Config.AdminSteamList = {
+    "steam:110000108381d36"
+}
 
 
 -----------------------
@@ -89,3 +92,17 @@ Config.FriendAPI_TargetResource = 'qb'
 
 -- A quick wait filter after performing an action, is in seconds.
 Config.FriendAPI_AntiSpamTimer = 5
+
+-- If you want to 'hide' a head text when ped has any Mask (Mask section)
+Config.UseMaskValidation = true
+-- Advanced algorithm is a list of allowerd INDEX of clothes. This works when you have a custom clothes pack.
+Config.MaskAdvancedValidationAlgorithm = false
+
+-- List of allowed mask index, only works when 'MaskAdvancedValidationAlgorithm' its true.
+Config.MaskAllowedList = {
+    {1, 5}, -- A group of numbers (1, 2, 3, 4, 5)
+    8, -- A Single number
+    --10,
+    --{15, 20}
+}
+
