@@ -30,6 +30,11 @@ Config.UseKVPInsteadDatabase = false
 -- otherwise if the player reconnects they will not be able to identify themselves as a friend.
 Config.SyncKVPToClient = 12 -- seconds
 
+-- Replace 'nil' for compatibility ESX, QBCore or any framework with the Player Load Event.
+-- ESX: 'esx:playerLoaded'
+-- QBCore: 'QBCore:Client:OnPlayerLoaded'
+Config.PlayerLoadEvent = nil
+
 -----------------------
 
 -- Command to hide the id above the head
@@ -83,6 +88,8 @@ Config.FriendAPI_KeyToCancel = 45
 -- If you are not friends, do you want to show a text above the head that says 'Unknown'?
 Config.FriendAPI_HeadUnknownText = true
 Config.FriendAPI_HeadViewDistance = 10
+Config.FriendAPI_UseTalkingColor = true
+Config.FriendAPI_TalkingColor = vector3(25, 255, 25) -- R G B
 
 --- Select a Target Resource 
 -- 'ox' : OxTarget

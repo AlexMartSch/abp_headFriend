@@ -445,7 +445,13 @@ end)
 
 CreateThread(function() 
     
-    TriggerServerEvent('abp_headFriend::RegisterPlayer')
+    if not Config.PlayerLoadEvent then
+        TriggerServerEvent('abp_headFriend::RegisterPlayer')
+    else
+        RegisterNetEvent(Config.PlayerLoadEvent, function()
+            TriggerServerEvent('abp_headFriend::RegisterPlayer')
+        end)
+    end
 
     while true do
 
@@ -490,8 +496,18 @@ CreateThread(function()
                                     displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
                                 end
                             end
+
+                            local _z2 = z2 + 1.1
     
-                            DrawText3D(x2, y2, z2 + 1.1, 1.5, displayName , 255, 255, 255)
+                            if Config.FriendAPI_UseTalkingColor then
+                                if NetworkIsPlayerTalking(playerServerId) then
+                                    DrawText3D(x2, y2, _z2, 1.5, displayName , Config.FriendAPI_TalkingColor.x, Config.FriendAPI_TalkingColor.y, Config.FriendAPI_TalkingColor.z)
+                                else
+                                    DrawText3D(x2, y2, _z2, 1.5, displayName , 255, 255, 255)
+                                end
+                            else
+                                DrawText3D(x2, y2, _z2, 1.5, displayName , 255, 255, 255)
+                            end
 
                             if Config.EnableAdminMode and isPlayerInAdminMode(playerServerId) then
                                 DrawText3D(x2, y2, z2 + 1.2, 1.6, Config.AdminModeText , 255, 50, 50)
