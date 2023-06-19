@@ -500,7 +500,8 @@ CreateThread(function()
                             local _z2 = z2 + 1.1
     
                             if Config.FriendAPI_UseTalkingColor then
-                                if NetworkIsPlayerTalking(playerServerId) then
+                                local playerId = GetPlayerFromServerId(playerServerId)
+                                if NetworkIsPlayerTalking(playerId) then
                                     DrawText3D(x2, y2, _z2, 1.5, displayName , Config.FriendAPI_TalkingColor.x, Config.FriendAPI_TalkingColor.y, Config.FriendAPI_TalkingColor.z)
                                 else
                                     DrawText3D(x2, y2, _z2, 1.5, displayName , 255, 255, 255)
