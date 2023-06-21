@@ -45,6 +45,7 @@ Config.HideNamesCommandEnabled = true
 Config.EnableAdminMode = true
 Config.AdminModeCommandName = "friendmin"
 Config.AdminModeText = "Staff"
+Config.AdminHideMeCommandName = "hideme"
 
 
 Config.UseAdminList = true
@@ -89,7 +90,15 @@ Config.FriendAPI_KeyToCancel = 45
 Config.FriendAPI_HeadUnknownText = true
 Config.FriendAPI_HeadViewDistance = 10
 Config.FriendAPI_UseTalkingColor = true
-Config.FriendAPI_TalkingColor = vector3(25, 255, 25) -- R G B
+Config.FriendAPI_TalkingColor = {
+    R = 25,
+    G = 255,
+    B = 25
+} -- R G B
+
+-- For exmple: AlexBanPer #1 - Test Name #1 
+-- Only if are friends. 
+Config.FriendAPI_UseIdAfterHeadName = true
 
 --- Select a Target Resource 
 -- 'ox' : OxTarget

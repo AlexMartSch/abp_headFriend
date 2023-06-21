@@ -135,9 +135,31 @@ lib.callback.register('abp_headFriend:tryRegisterStaffMode', function(source)
     if checkIfAdmin(source) then
         local existRecord = adminModeList[source]
         if existRecord then
-            adminModeList[source] = not adminModeList[source]
+            adminModeList[source].text = not adminModeList[source].text
         else
-            adminModeList[source] = true
+            adminModeList[source] = {
+                hide = false,
+                text = true
+            }
+        end
+
+        TriggerClientEvent('abp_headFriend::SyncAdminMode', -1, adminModeList)
+        return true, adminModeList
+    end
+
+    return false, {}
+end)
+
+lib.callback.register('abp_headFriend:tryRegisterHideMe', function(source) 
+    if checkIfAdmin(source) then
+        local existRecord = adminModeList[source]
+        if existRecord then
+            adminModeList[source].hide = not adminModeList[source].hide
+        else
+            adminModeList[source] = {
+                hide = true,
+                text = false
+            }
         end
 
         TriggerClientEvent('abp_headFriend::SyncAdminMode', -1, adminModeList)
@@ -286,3 +308,15 @@ end)
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
+
+function checkSetup()
+    if Config.FriendAPI_UseCustomId then
+        local identifier = getUserIdentifier(-1)
+        if identifier == "abc123" then
+            print("[WARNING] Please setup 'getUserIdentifier()' in custom functions.")
+            print("[WARNING] This returns 'abc123' as the identifier, this will cause an error when making friends.")
+        end
+    end
+end
+
+checkSetup()

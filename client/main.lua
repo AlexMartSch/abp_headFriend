@@ -6,8 +6,12 @@ FriendAPI.NearPlayers = {}
 FriendAPI.ShowHeadText = true
 FriendAPI.CurrentAdmins = {}
 
-local isPlayerInAdminMode = function(playerSource)
-    return FriendAPI.CurrentAdmins[playerSource]
+local hasPlayerAdminText = function(playerSource)
+    return (FriendAPI.CurrentAdmins[playerSource] and FriendAPI.CurrentAdmins[playerSource].text or false)
+end
+
+local isPlayerAdminHide = function(playerSource)
+    return (FriendAPI.CurrentAdmins[playerSource] and FriendAPI.CurrentAdmins[playerSource].hide or false)
 end
 
 local getFriendsCount = function()
@@ -121,6 +125,15 @@ if Config.EnableAdminMode then
             FriendAPI.CurrentAdmins = adminModeList
         end
     end, false)
+
+    RegisterCommand(Config.AdminHideMeCommandName, function(source) 
+        local success, adminModeList = lib.callback.await('abp_headFriend:tryRegisterHideMe', false)
+
+        if success then
+            FriendAPI.CurrentAdmins = adminModeList
+        end
+    end, false)
+    
 end
 
 if Config.FriendMenu_CommandEnabled then
@@ -471,7 +484,7 @@ end)
 CreateThread(function() 
 
     while true do
-        local timeout = 4
+        local timeout = 3
 
         if FriendAPI.ShowHeadText then
             if #FriendAPI.NearPlayers > 0 then
@@ -481,37 +494,41 @@ CreateThread(function()
                         local targetPed = player.ped
     
                         if targetPed ~= PlayerPedId() then 
-                            local playerServerId = GetPlayerServerId(NetworkGetPlayerIndexFromPed(targetPed))
-                            local x2, y2, z2 = table.unpack(GetEntityCoords(targetPed, true))
-    
-                            local displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
-                            local areFriends = areFriends(playerServerId)
+                            local playerIndex = NetworkGetPlayerIndexFromPed(targetPed)
+                            local playerServerId = GetPlayerServerId(playerIndex)
 
-                            if areFriends then
-                                displayName = areFriends.headtext
-                            end
+                            if not isPlayerAdminHide(playerServerId) then
+                                local x2, y2, z2 = table.unpack(GetEntityCoords(targetPed, true))
+        
+                                local displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                local areFriends = areFriends(playerServerId)
 
-                            if Config.UseMaskValidation then
-                                if pedHasMask(targetPed) then
-                                    displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                if areFriends then
+                                    displayName = areFriends.headtext .. (Config.FriendAPI_UseIdAfterHeadName and " #" .. playerServerId or "")
                                 end
-                            end
 
-                            local _z2 = z2 + 1.1
-    
-                            if Config.FriendAPI_UseTalkingColor then
-                                local playerId = GetPlayerFromServerId(playerServerId)
-                                if NetworkIsPlayerTalking(playerId) then
-                                    DrawText3D(x2, y2, _z2, 1.5, displayName , Config.FriendAPI_TalkingColor.x, Config.FriendAPI_TalkingColor.y, Config.FriendAPI_TalkingColor.z)
+                                if Config.UseMaskValidation then
+                                    if pedHasMask(targetPed) then
+                                        displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                    end
+                                end
+
+                                local _z2 = z2 + 1.1
+        
+                                if Config.FriendAPI_UseTalkingColor then
+                                    
+                                    if NetworkIsPlayerTalking(playerIndex) then
+                                        DrawText3D(x2, y2, _z2, 1.5, displayName, math.floor(Config.FriendAPI_TalkingColor.R), Config.FriendAPI_TalkingColor.G, Config.FriendAPI_TalkingColor.B)
+                                    else
+                                        DrawText3D(x2, y2, _z2, 1.5, displayName, 255, 255, 255)
+                                    end
                                 else
-                                    DrawText3D(x2, y2, _z2, 1.5, displayName , 255, 255, 255)
+                                    DrawText3D(x2, y2, _z2, 1.5, displayName, 255, 255, 255)
                                 end
-                            else
-                                DrawText3D(x2, y2, _z2, 1.5, displayName , 255, 255, 255)
-                            end
 
-                            if Config.EnableAdminMode and isPlayerInAdminMode(playerServerId) then
-                                DrawText3D(x2, y2, z2 + 1.2, 1.6, Config.AdminModeText , 255, 50, 50)
+                                if Config.EnableAdminMode and hasPlayerAdminText(playerServerId) then
+                                    DrawText3D(x2, y2, z2 + 1.2, 1.6, Config.AdminModeText , 255, 50, 50)
+                                end
                             end
                         end
                     end
