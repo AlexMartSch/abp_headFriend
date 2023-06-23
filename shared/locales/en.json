@@ -19,7 +19,6 @@
     "REQUEST_FRIENDSHIP": "Request Friendship",
     "CANCEL_FRIENDSHIP": "Cancel Friendship",
 
-
     "FRIEND_COUNT": "You have %s friends!",
     "MENU_INPUT_TITLE": "Friendship Request",
     "MENU_INPUT_LABEL": "Player Target",

@@ -7,6 +7,7 @@ local getUserId = function(source)
         for k, v in pairs(GetPlayerIdentifiers(source)) do
             if string.sub(v, 1, string.len("steam:")) == "steam:" then
                 result = v
+                break
             end
         end
     else
@@ -209,19 +210,21 @@ lib.callback.register('abp_headFriend:RequestFriendship', function(source, playe
     local localId  = getUserId(source)
 
     if targetId == localId then
-        return TriggerClientEvent('abp_headFriend:notify', source, {
+        TriggerClientEvent('abp_headFriend:notify', source, {
             title = Translate("FRIENDSHIP"),
             description = Translate("REQUEST_MYSELF"),
             type = "error"
         }) 
+        return false
     end
 
     if recentFriendRequests[localId] and recentFriendRequests[localId] > GetGameTimer() then
-        return TriggerClientEvent('abp_headFriend:notify', source, {
+        TriggerClientEvent('abp_headFriend:notify', source, {
             title = Translate("FRIENDSHIP"),
             description = Translate("REQUEST_TIMEOUT"),
             type = "error"
         })
+        return false
     end
 
     if not Config.UseKVPInsteadDatabase then
@@ -274,11 +277,11 @@ lib.callback.register('abp_headFriend:RequestFriendship', function(source, playe
 end)
 
 
-RegisterNetEvent('abp_headFriend::RegisterPlayer', function()
-    local src = source
+RegisterNetEvent('abp_headFriend::RegisterPlayer', function(playerSource)
+    local src = playerSource or source
     playersCache[src] = {
         identifier = getUserId(src),
-        headtext   = getUserHeadName(src),
+        headtext   = getUserHeadName(src) or "Not Found",
         source     = src
     }
 

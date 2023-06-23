@@ -31,8 +31,20 @@ Config.UseKVPInsteadDatabase = false
 Config.SyncKVPToClient = 12 -- seconds
 
 -- Replace 'nil' for compatibility ESX, QBCore or any framework with the Player Load Event.
--- ESX: 'esx:playerLoaded'
+-- ESX:     'esx:playerLoaded'
 -- QBCore: 'QBCore:Client:OnPlayerLoaded'
+
+--- IMPORTANT: If you use any multicharacter, you must use an event that is called on the client once the player has loaded (after selecting their character) 
+--- otherwise this could lead to errors when finding player settings.
+
+-- IMPORTANT 2: If you don't know which event is correct, you can do the following:
+-- Use this event [  abp_headFriend::RegisterPlayer  ] (SERVER SIDE) and use them on your multi-character resource when the player is connected (or loaded)
+--      -- Please note the following, ABP will be able to guide you but does not promise to help you in case of custom resource errors.
+--      -- If you have problems with your paid/free resource, consult your developer for assistance in how implements ABP Server Events.
+--- Example: 
+      -- MyMulticharacterScript -> server -> Player.Login() -> TriggerEvent('abp_headFriend::RegisterPlayer', source)
+
+-- IMPORTANT 3: Keep nil if you use abp_headFriend::RegisterPlayer server event.
 Config.PlayerLoadEvent = nil
 
 -----------------------
@@ -79,7 +91,8 @@ Config.FriendMenu_CanAddFriends_DistanceMax = 5
 -- Friend requests have a valid death time so they are no more. How many seconds do you want an invitation to last?
 Config.FriendAPI_RequestTimeout = 30
 
--- Otherwise steamid will be used as default
+-- If this option is TRUE, then it must be set in server/custom/functions.lua: getUserIdentifier()
+-- Otherwise the steamID will be used automatically.
 Config.FriendAPI_UseCustomId = false
 
 Config.FriendAPI_UseConfirmDialogInsteadOfKeys = true
