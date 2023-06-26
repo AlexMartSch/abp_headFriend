@@ -473,10 +473,10 @@ CreateThread(function()
         end
 
         if not Config.UseKVPInsteadDatabase then
-            FriendAPI.Friends = lib.callback.await('abp_headFriend:RequestMyFriends', 200)
+            FriendAPI.Friends = lib.callback.await('abp_headFriend:RequestMyFriends', 300)
         end
 
-        Wait(1300)
+        Wait(1500)
     end
 
 end)
