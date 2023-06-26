@@ -23,6 +23,12 @@ Config = {}
 -- Note: Use the name of the file as language. [es].json | [en].json
 Config.Language = 'en'
 
+--- Current Supported options:
+--- 'esx' ES Extended
+--- 'qb'  QB-Core
+--- 'standalone' Standalone configuration 
+Config.Framework = "standalone"
+
 -- KVP Local storage on the client
 -- Warning: Changing this option when there are already records will prevent them from being loaded.
 Config.UseKVPInsteadDatabase = false
