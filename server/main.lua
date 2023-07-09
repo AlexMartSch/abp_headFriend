@@ -2,10 +2,9 @@ local adminModeList = {}
 
 local getUserId = function(source)
     local result = nil
-
-    if not Config.FriendAPI_UseCustomId then
+    if Config.Framework == "standalone" then
         for k, v in pairs(GetPlayerIdentifiers(source)) do
-            if string.sub(v, 1, string.len("steam:")) == "steam:" then
+            if string.sub(v, 1, string.len("license:")) == "license:" then
                 result = v
                 break
             end
@@ -20,8 +19,8 @@ end
 local getUserIds = function(source)
     local result = {}
     for k, v in pairs(GetPlayerIdentifiers(source)) do
-        if string.sub(v, 1, string.len("steam:")) == "steam:" then
-            result['steam'] = v
+        if string.sub(v, 1, string.len("license:")) == "license:" then
+            result['license'] = v
         elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
             result['discord'] = v
         end

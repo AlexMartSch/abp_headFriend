@@ -68,7 +68,7 @@ Config.AdminHideMeCommandName = "hideme"
 
 Config.UseAdminList = true
 Config.AdminSteamList = {
-    "steam:110000108381d36"
+    "license:abc123"
 }
 
 
@@ -97,10 +97,6 @@ Config.FriendMenu_CanAddFriends_DistanceMax = 5
 -- Friend requests have a valid death time so they are no more. How many seconds do you want an invitation to last?
 Config.FriendAPI_RequestTimeout = 30
 
--- If this option is TRUE, then it must be set in server/custom/functions.lua: getUserIdentifier()
--- Otherwise the steamID will be used automatically.
-Config.FriendAPI_UseCustomId = false
-
 Config.FriendAPI_UseConfirmDialogInsteadOfKeys = true
 Config.FriendAPI_KeyToAccept = 246
 Config.FriendAPI_KeyToCancel = 45
@@ -123,7 +119,7 @@ Config.FriendAPI_UseIdAfterHeadName = true
 -- 'ox' : OxTarget
 -- 'qb' : QbTarget
 --- IMPORTANT: OxLib always is required but PolyZone is required only to QBTarget.
-Config.FriendAPI_TargetResource = 'qb'
+Config.FriendAPI_TargetResource = 'ox'
 
 -- A quick wait filter after performing an action, is in seconds.
 Config.FriendAPI_AntiSpamTimer = 5

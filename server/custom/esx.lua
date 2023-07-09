@@ -31,7 +31,7 @@ end
 function getUserIdentifier(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     if not xPlayer then return source end
-
+    
     return xPlayer.identifier
 end
 
