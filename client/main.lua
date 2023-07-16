@@ -481,58 +481,64 @@ CreateThread(function()
 
 end)
 
-CreateThread(function() 
-
+CreateThread(function()
     while true do
         local timeout = 3
 
         if FriendAPI.ShowHeadText then
             if #FriendAPI.NearPlayers > 0 then
                 for index, player in pairs(FriendAPI.NearPlayers) do
-    
+
                     if IsPedAPlayer(player.ped) then
                         local targetPed = player.ped
-    
-                        if targetPed ~= PlayerPedId() then 
+                        local playerPed = PlayerPedId()
+
+                        if targetPed ~= playerPed then
                             local playerIndex = NetworkGetPlayerIndexFromPed(targetPed)
                             local playerServerId = GetPlayerServerId(playerIndex)
 
                             if not isPlayerAdminHide(playerServerId) then
-                                local x2, y2, z2 = table.unpack(GetEntityCoords(targetPed, true))
-        
-                                local displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
-                                local areFriends = areFriends(playerServerId)
+                                local canContinue = true
 
-                                if areFriends then
-                                    displayName = areFriends.headtext .. (Config.FriendAPI_UseIdAfterHeadName and " #" .. playerServerId or "")
+                                if Config.FriendAPI_UseRaycastForWalls and not (HasEntityClearLosToEntity(playerPed, targetPed, 17) == 1) then
+                                    canContinue = false
                                 end
 
-                                if Config.UseMaskValidation then
-                                    if pedHasMask(targetPed) then
-                                        displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                if canContinue then
+
+                                    local x2, y2, z2 = table.unpack(GetEntityCoords(targetPed, true))
+
+                                    local displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                    local areFriends = areFriends(playerServerId)
+
+                                    if areFriends then
+                                        displayName = areFriends.headtext .. (Config.FriendAPI_UseIdAfterHeadName and " #" .. playerServerId or "")
                                     end
-                                end
 
-                                local _z2 = z2 + 1.1
-        
-                                if Config.FriendAPI_UseTalkingColor then
-                                    
-                                    if NetworkIsPlayerTalking(playerIndex) then
-                                        DrawText3D(x2, y2, _z2, 1.5, displayName, math.floor(Config.FriendAPI_TalkingColor.R), Config.FriendAPI_TalkingColor.G, Config.FriendAPI_TalkingColor.B)
+                                    if Config.UseMaskValidation then
+                                        if pedHasMask(targetPed) then
+                                            displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                        end
+                                    end
+
+                                    local _z2 = z2 + 1.1
+                                    if Config.FriendAPI_UseTalkingColor then
+                                        if NetworkIsPlayerTalking(playerIndex) then
+                                            DrawText3D(x2, y2, _z2, 1.5, displayName, math.floor(Config.FriendAPI_TalkingColor.R), Config.FriendAPI_TalkingColor.G, Config.FriendAPI_TalkingColor.B)
+                                        else
+                                            DrawText3D(x2, y2, _z2, 1.5, displayName, 255, 255, 255)
+                                        end
                                     else
                                         DrawText3D(x2, y2, _z2, 1.5, displayName, 255, 255, 255)
                                     end
-                                else
-                                    DrawText3D(x2, y2, _z2, 1.5, displayName, 255, 255, 255)
-                                end
 
-                                if Config.EnableAdminMode and hasPlayerAdminText(playerServerId) then
-                                    DrawText3D(x2, y2, z2 + 1.2, 1.6, Config.AdminModeText , 255, 50, 50)
+                                    if Config.EnableAdminMode and hasPlayerAdminText(playerServerId) then
+                                        DrawText3D(x2, y2, z2 + 1.2, 1.6, Config.AdminModeText , 255, 50, 50)
+                                    end
                                 end
                             end
                         end
                     end
-                    
                 end
             else
                 timeout = 500
