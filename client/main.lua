@@ -33,6 +33,8 @@ local areFriends = function(playerTarget)
         end
     end
 
+    Debug(result .. (result and result.headtext or "none"))
+
     return result
 end
 

@@ -1,3 +1,4 @@
+local debugTimer = GetGameTimer()
 Config = {}
 
 --[[
@@ -22,6 +23,8 @@ Config = {}
 
 -- Note: Use the name of the file as language. [es].json | [en].json
 Config.Language = 'en'
+
+Config.DebugMode = false
 
 --- Current Supported options:
 --- 'esx' ES Extended
@@ -148,3 +151,17 @@ Config.MaskAllowedList = {
     --10,
     --{15, 20}
 }
+
+
+
+-------------- DEBUG
+function Debug(...)
+    if Config.DebugMode then
+        if debugTimer > GetGameTimer() then
+            return
+        end 
+    
+        debugTimer = GetGameTimer() + 1000
+        print("[DEBUG] ", ...)
+    end
+end
