@@ -36,6 +36,8 @@ local areFriends = function(playerTarget)
     return result
 end
 
+exports('areFriends', areFriends)
+
 local removeFriend = function(playerTarget)
     local index = 0
     for i, friend in pairs(FriendAPI.Friends) do
