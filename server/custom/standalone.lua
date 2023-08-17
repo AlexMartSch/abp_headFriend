@@ -42,6 +42,12 @@ function getUserHeadName(source)
     return GetPlayerName(source)
 end
 
+-------------------------------
+-- In this function you can set it to fetch the player id, for example if you have an id corresponding to "#abc123" then you should use some function to get the player id and it will be displayed overhead.
+function getCustomPlayerID(source)
+    return math.random(1000, 9999)
+end
+------------------
 
 ----- Check some Snippets for QBCore in: https://discord.com/channels/1103383170285584485/1120207101596274718 & https://discord.com/channels/1103383170285584485/1114093571960741961
 ---- You can make your own changes for this code.

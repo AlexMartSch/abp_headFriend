@@ -115,6 +115,9 @@ Config.FriendAPI_TalkingColor = {
 -- Only if are friends. 
 Config.FriendAPI_UseIdAfterHeadName = true
 
+--- If Config.FriendAPI_UseIdAfterHeadName is true, then PlayerServerId will be used; otherwise, a custom player ID can be set.
+Config.FriendAPI_UseCustomIdAfterHeadName = false
+
 --- Select a Target Resource 
 -- 'ox' : OxTarget
 -- 'qb' : QbTarget
@@ -139,4 +142,3 @@ Config.MaskAllowedList = {
     --10,
     --{15, 20}
 }
-
