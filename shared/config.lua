@@ -111,6 +111,12 @@ Config.FriendAPI_TalkingColor = {
     B = 25
 } -- R G B
 
+-- Scale text overhead
+Config.FriendAPI_TextScale = {
+    Players = 1.5,
+    AdminMode  = 1.6
+}
+
 -- For exmple: AlexBanPer #1 - Test Name #1 
 -- Only if are friends. 
 Config.FriendAPI_UseIdAfterHeadName = true

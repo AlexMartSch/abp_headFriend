@@ -526,16 +526,16 @@ CreateThread(function()
                                     local _z2 = z2 + 1.1
                                     if Config.FriendAPI_UseTalkingColor then
                                         if NetworkIsPlayerTalking(playerIndex) then
-                                            DrawText3D(x2, y2, _z2, 1.5, displayName, math.floor(Config.FriendAPI_TalkingColor.R), Config.FriendAPI_TalkingColor.G, Config.FriendAPI_TalkingColor.B)
+                                            DrawText3D(x2, y2, _z2, Config.FriendAPI_TextScale.Players, displayName, math.floor(Config.FriendAPI_TalkingColor.R), Config.FriendAPI_TalkingColor.G, Config.FriendAPI_TalkingColor.B)
                                         else
-                                            DrawText3D(x2, y2, _z2, 1.5, displayName, 255, 255, 255)
+                                            DrawText3D(x2, y2, _z2, Config.FriendAPI_TextScale.Players, displayName, 255, 255, 255)
                                         end
                                     else
-                                        DrawText3D(x2, y2, _z2, 1.5, displayName, 255, 255, 255)
+                                        DrawText3D(x2, y2, _z2, Config.FriendAPI_TextScale.Players, displayName, 255, 255, 255)
                                     end
 
                                     if Config.EnableAdminMode and hasPlayerAdminText(playerServerId) then
-                                        DrawText3D(x2, y2, z2 + 1.2, 1.6, Config.AdminModeText , 255, 50, 50)
+                                        DrawText3D(x2, y2, z2 + 1.2, Config.FriendAPI_TextScale.AdminMode, Config.AdminModeText , 255, 50, 50)
                                     end
                                 end
                             end
