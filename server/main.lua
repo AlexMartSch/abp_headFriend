@@ -228,11 +228,12 @@ lib.callback.register('abp_headFriend:RequestFriendship', function(source, playe
 
     if not Config.UseKVPInsteadDatabase then
         if FriendAPI.AreFriend(targetId, localId) then
-            return TriggerClientEvent('abp_headFriend:notify', source, {
+            TriggerClientEvent('abp_headFriend:notify', source, {
                 title = Translate("FRIENDSHIP"),
                 description = Translate("REQUEST_ALREADY_FRIEND"),
                 type = "error"
             })
+            return false
         end
     end
 
@@ -256,7 +257,14 @@ lib.callback.register('abp_headFriend:RequestFriendship', function(source, playe
                     description = Translate("REQUEST_ACCEPTED", targetId),
                     type = "success"
                 })
-                return true, getUserHeadName(playerTarget), targetId
+
+                local playerHeadTxt = getUserHeadName(playerTarget)
+
+                if not playerHeadTxt or playerHeadTxt == nil then
+                    playerHeadTxt = GetPlayerName(playerTarget)
+                end
+
+                return true, playerHeadTxt, targetId
             end
 
             if not Config.UseKVPInsteadDatabase then
