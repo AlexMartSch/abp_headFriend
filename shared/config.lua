@@ -139,6 +139,8 @@ Config.FriendAPI_AntiSpamTimer = 5
 -- Activating this option will enable the raycast check to prevent the IdHead from appearing if there is an obstacle in the way.
 Config.FriendAPI_UseRaycastForWalls = true
 
+Config.HideOverheadTextInVehicle = true
+
 -- If you want to 'hide' a head text when ped has any Mask (Mask section)
 Config.UseMaskValidation = true
 -- Advanced algorithm is a list of allowerd INDEX of clothes. This works when you have a custom clothes pack.

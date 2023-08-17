@@ -508,6 +508,12 @@ CreateThread(function()
                                     canContinue = false
                                 end
 
+                                if Config.HideOverheadTextInVehicle then
+                                    if (IsPedInAnyVehicle(targetPed, false)) then
+                                        canContinue = false
+                                    end
+                                end
+
                                 if canContinue then
 
                                     local x2, y2, z2 = table.unpack(GetEntityCoords(targetPed, true))
