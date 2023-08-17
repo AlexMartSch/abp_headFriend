@@ -514,7 +514,7 @@ CreateThread(function()
                                     local areFriends = areFriends(playerServerId)
 
                                     if areFriends then
-                                        displayName = areFriends.headtext .. (Config.FriendAPI_UseIdAfterHeadName and " #" .. playerServerId or "")
+                                        displayName = (areFriends.headtext or "?") .. (Config.FriendAPI_UseIdAfterHeadName and (Config.FriendAPI_UseCustomIdAfterHeadName and getCustomPlayerID(playerServerId) or " #" .. playerServerId) or "")
                                     end
 
                                     if Config.UseMaskValidation then
