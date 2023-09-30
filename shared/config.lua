@@ -125,7 +125,11 @@ Config.FriendAPI_TextScale = {
 Config.FriendAPI_UseIdAfterHeadName = true
 
 --- If Config.FriendAPI_UseIdAfterHeadName is true, then PlayerServerId will be used; otherwise, a custom player ID can be set.
+--- This funcion includes 'Unknown' text if player is not friends.
 Config.FriendAPI_UseCustomIdAfterHeadName = false
+
+-- On friendship request display SteamName or 'getUserHeadName' function
+Config.FriendAPI_UseUserHeadNameInsteadSteamNameOnFriendRequest = false
 
 --- Select a Target Resource 
 -- 'ox' : OxTarget

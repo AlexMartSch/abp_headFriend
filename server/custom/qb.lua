@@ -41,7 +41,12 @@ end
 
 -------------------------------
 -- In this function you can set it to fetch the player id, for example if you have an id corresponding to "#abc123" then you should use some function to get the player id and it will be displayed overhead.
-function getCustomPlayerID(source)
-    return math.random(1000, 9999)
+function GetCustomHeadText(playerId)
+    return GetPlayerName(playerId) .. " | " .. tostring(math.random(1000, 9999))
+end
+
+---- WIP
+function GetCustomUnknownHeadText(playerId)
+    return Translate("UNKNOWN") .. " | " .. tostring(playerId)
 end
 ------------------

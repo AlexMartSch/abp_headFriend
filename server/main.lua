@@ -192,6 +192,11 @@ lib.callback.register('abp_headFriend:RequestMyFriends', function(source)
                     myFriends[friendIndex] = friend
                     myFriends[friendIndex].friendshipId = dFriend.id
 
+                    if not Config.FriendAPI_UseIdAfterHeadName and Config.FriendAPI_UseCustomIdAfterHeadName then
+                        myFriends[friendIndex].customHeadtext = GetCustomHeadText(source)
+                        myFriends[friendIndex].customHeadUnknownText = GetCustomUnknownHeadText(source)
+                    end
+
                     break
                 end
             end 
@@ -249,7 +254,9 @@ lib.callback.register('abp_headFriend:RequestFriendship', function(source, playe
                 type = "success"
             })
 
-            local isAccepted = lib.callback.await('abp_headFriend:onRequestFriendship', playerTarget, localId, id)
+            local playerHeadTxt = getUserHeadName(playerTarget)
+
+            local isAccepted = lib.callback.await('abp_headFriend:onRequestFriendship', playerTarget, Config.FriendAPI_UseUserHeadNameInsteadSteamNameOnFriendRequest and playerHeadTxt or GetPlayerName(source), id)
             if isAccepted then
                 FriendAPI.AddFriend(localId, targetId)
                 TriggerClientEvent('abp_headFriend:notify', source, {
@@ -258,7 +265,7 @@ lib.callback.register('abp_headFriend:RequestFriendship', function(source, playe
                     type = "success"
                 })
 
-                local playerHeadTxt = getUserHeadName(playerTarget)
+                
 
                 if not playerHeadTxt or playerHeadTxt == nil then
                     playerHeadTxt = GetPlayerName(playerTarget)
@@ -292,6 +299,11 @@ RegisterNetEvent('abp_headFriend::RegisterPlayer', function(playerSource)
         source     = src
     }
 
+    if not Config.FriendAPI_UseIdAfterHeadName and Config.FriendAPI_UseCustomIdAfterHeadName then
+        playersCache[src].customHeadUnknownText = GetCustomUnknownHeadText(src)
+    end
+
+    TriggerClientEvent('abp_headFriend::SyncCachePlayers', src, playersCache)
     TriggerClientEvent('abp_headFriend::SyncAdminMode', src, adminModeList)
 end)
 

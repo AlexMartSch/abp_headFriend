@@ -5,6 +5,7 @@ FriendAPI.Friends = kvp and json.decode(kvp) or {}
 FriendAPI.NearPlayers = {}
 FriendAPI.ShowHeadText = true
 FriendAPI.CurrentAdmins = {}
+FriendAPI.CachePlayers = {}
 
 local hasPlayerAdminText = function(playerSource)
     return (FriendAPI.CurrentAdmins[playerSource] and FriendAPI.CurrentAdmins[playerSource].text or false)
@@ -33,7 +34,7 @@ local areFriends = function(playerTarget)
         end
     end
 
-    Debug(result .. (result and result.headtext or "none"))
+    Debug(result, "Headtext: " .. (result and result.headtext or "none"))
 
     return result
 end
@@ -104,6 +105,10 @@ end)
 
 RegisterNetEvent('abp_headFriend::SyncPlayers', function(pC) 
     refreshKVPList(pC)
+end)
+
+RegisterNetEvent('abp_headFriend::SyncCachePlayers', function(cachePlayers) 
+    FriendAPI.CachePlayers = cachePlayers
 end)
 
 RegisterNetEvent('abp_headFriend:OnCanceledFriendship', function(targetPlayer)
@@ -487,19 +492,21 @@ end)
 
 CreateThread(function()
     while true do
-        local timeout = 3
+        local timeout = 1
 
         if FriendAPI.ShowHeadText then
             if #FriendAPI.NearPlayers > 0 then
                 for index, player in pairs(FriendAPI.NearPlayers) do
 
                     if IsPedAPlayer(player.ped) then
-                        local targetPed = player.ped
-                        local playerPed = PlayerPedId()
+                        local targetPed     = player.ped
+                        local playerPed     = PlayerPedId()
+                        
 
                         if targetPed ~= playerPed then
                             local playerIndex = NetworkGetPlayerIndexFromPed(targetPed)
                             local playerServerId = GetPlayerServerId(playerIndex)
+                            local cachePlayer = FriendAPI.CachePlayers[playerServerId]
 
                             if not isPlayerAdminHide(playerServerId) then
                                 local canContinue = true
@@ -518,16 +525,16 @@ CreateThread(function()
 
                                     local x2, y2, z2 = table.unpack(GetEntityCoords(targetPed, true))
 
-                                    local displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                    local displayName = (Config.FriendAPI_HeadUnknownText and ((cachePlayer and Config.FriendAPI_UseCustomIdAfterHeadName) and cachePlayer.customHeadUnknownText or Translate("UNKNOWN") .. " #" .. playerServerId) or "")
                                     local areFriends = areFriends(playerServerId)
 
                                     if areFriends then
-                                        displayName = (areFriends.headtext or "?") .. (Config.FriendAPI_UseIdAfterHeadName and (Config.FriendAPI_UseCustomIdAfterHeadName and getCustomPlayerID(playerServerId) or " #" .. playerServerId) or "")
+                                        displayName = (areFriends.headtext or "?") .. (Config.FriendAPI_UseIdAfterHeadName and (Config.FriendAPI_UseCustomIdAfterHeadName and areFriends.customHeadtext or " #" .. playerServerId) or "")
                                     end
 
                                     if Config.UseMaskValidation then
                                         if pedHasMask(targetPed) then
-                                            displayName = (Config.FriendAPI_HeadUnknownText and (Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                            displayName = (Config.FriendAPI_HeadUnknownText and ((cachePlayer and Config.FriendAPI_UseCustomIdAfterHeadName) and cachePlayer.customHeadUnknownText or Translate("UNKNOWN") .. " #" .. playerServerId) or "")
                                         end
                                     end
 
