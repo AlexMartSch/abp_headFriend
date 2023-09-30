@@ -70,7 +70,7 @@ Config.AdminHideMeCommandName = "hideme"
 
 
 Config.UseAdminList = true
-Config.AdminSteamList = {
+Config.AdminLicenseList = {
     "license:abc123"
 }
 

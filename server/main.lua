@@ -33,8 +33,8 @@ local checkIfAdmin = function(source)
     if Config.UseAdminList then
         local user = getUserIds(source)
         local hasAccess = false
-        for k, steamId in pairs(Config.AdminSteamList) do
-            if user.steam == steamId then
+        for k, license in pairs(Config.AdminLicenseList) do
+            if user.license == license then
                 hasAccess = true
                 break
             end
