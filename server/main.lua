@@ -192,7 +192,7 @@ lib.callback.register('abp_headFriend:RequestMyFriends', function(source)
                     myFriends[friendIndex] = friend
                     myFriends[friendIndex].friendshipId = dFriend.id
 
-                    if not Config.FriendAPI_UseIdAfterHeadName and Config.FriendAPI_UseCustomIdAfterHeadName then
+                    if Config.FriendAPI_UseIdAfterHeadName and Config.FriendAPI_UseCustomIdAfterHeadName then
                         myFriends[friendIndex].customHeadtext = GetCustomHeadText(source)
                         myFriends[friendIndex].customHeadUnknownText = GetCustomUnknownHeadText(source)
                     end
@@ -299,7 +299,7 @@ RegisterNetEvent('abp_headFriend::RegisterPlayer', function(playerSource)
         source     = src
     }
 
-    if not Config.FriendAPI_UseIdAfterHeadName and Config.FriendAPI_UseCustomIdAfterHeadName then
+    if Config.FriendAPI_UseIdAfterHeadName and Config.FriendAPI_UseCustomIdAfterHeadName then
         playersCache[src].customHeadUnknownText = GetCustomUnknownHeadText(src)
     end
 
