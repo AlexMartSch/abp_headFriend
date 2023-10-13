@@ -25,14 +25,21 @@ function isAdmin(source)
     return false
 end
 
-function getUserIdentifier(source)
+-------------------------------
+--  This function will make if you have 'Config.FriendAPI_UseCustomId' enabled, select your framework's custom identifier.
+--  Set this option if you do NOT want to work with the STEAM identifier, for example if you have more than one character or just want to change it.
+------------------
+function GetUserIdentifier(source)
     local xPlayer = QBCORE.Functions.GetPlayer(source)
     if not xPlayer then return source end
 
     return xPlayer.PlayerData.citizenid
 end
 
-function getUserHeadName(source)
+-------------------------------
+--  If you do NOT want to use the Steam name as an overhead display, then manually set what you want to display.
+------------------
+function GetUserHeadName(source)
     local xPlayer = QBCORE.Functions.GetPlayer(source)
     if not xPlayer then GetPlayerName(source) end
 
@@ -41,11 +48,12 @@ end
 
 -------------------------------
 -- In this function you can set it to fetch the player id, for example if you have an id corresponding to "#abc123" then you should use some function to get the player id and it will be displayed overhead.
+------------------
 function GetCustomHeadText(playerId)
     return GetPlayerName(playerId) .. " | " .. tostring(math.random(1000, 9999))
 end
 
----- WIP
+
 function GetCustomUnknownHeadText(playerId)
     return Translate("UNKNOWN") .. " | " .. tostring(playerId)
 end

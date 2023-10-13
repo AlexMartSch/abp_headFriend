@@ -28,14 +28,17 @@ function isAdmin(source)
     return xPlayer.getGroup() == "admin"
 end
 
-function getUserIdentifier(source)
+function GetUserIdentifier(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     if not xPlayer then return source end
     
     return xPlayer.identifier
 end
 
-function getUserHeadName(source)
+-------------------------------
+--  If you do NOT want to use the Steam name as an overhead display, then manually set what you want to display.
+------------------
+function GetUserHeadName(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     if not xPlayer then return GetPlayerName(source) end
     
