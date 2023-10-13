@@ -187,6 +187,11 @@ lib.callback.register('abp_headFriend:RequestMyFriends', function(source)
     local userIdentificator = getUserId(source)
     
     local Player = playersCache[userIdentificator]
+
+    if Config.FriendAPI_RefreshDisplayName then
+        Player:UpdateHeadText()
+    end
+
     local friends = Player:GetFriends()
     local myFriends = {}
     
@@ -202,6 +207,8 @@ lib.callback.register('abp_headFriend:RequestMyFriends', function(source)
             }
         end
     end
+
+    
 
     return myFriends--, #dbFriends
 end)
@@ -269,11 +276,11 @@ lib.callback.register('abp_headFriend:RequestFriendship', function(source, playe
                         type = "success"
                     })
 
-                    -- TriggerClientEvent('ox_lib:notify', playerTarget, {
-                    --     title = Translate("FRIENDSHIP"),
-                    --     description = Translate("REQUEST_ACCEPTED", playerHeadTxt),
-                    --     type = "success"
-                    -- })
+                    TriggerClientEvent('ox_lib:notify', playerTarget, {
+                        title = Translate("FRIENDSHIP"),
+                        description = Translate("REQUEST_ACCEPTED", playerHeadTxt),
+                        type = "success"
+                    })
                 end
 
                 return true, playersCache[localId]:GetFriends()

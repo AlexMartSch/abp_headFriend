@@ -40,6 +40,22 @@ function Player:FillFriends()
     end
 end
 
+function Player:UpdateHeadText()
+    local headText = nil
+    local unknown = nil
+
+    if Config.FiendAPI_UseCustomHeadText then
+        headText = GetCustomHeadText(self.playerId)
+        unknown = GetCustomUnknownHeadText(self.playerId)
+    else
+        headText = GetPlayerName(self.playerId)
+        unknown = Translate("UNKNOWN")
+    end
+
+    self.displayname = headText
+    self.unknown = unknown
+end
+
 function Player:GetIdentifier()
     return self.identifier
 end

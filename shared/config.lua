@@ -127,6 +127,9 @@ Config.FiendAPI_UseCustomHeadText = true
 -- On friendship request display SteamName or 'getUserHeadName' function
 Config.FriendAPI_UseUserHeadNameInsteadSteamNameOnFriendRequest = true
 
+-- Refresh displayname
+Config.FriendAPI_RefreshDisplayName = true
+
 --- Select a Target Resource 
 -- 'ox' : OxTarget
 -- 'qb' : QbTarget
