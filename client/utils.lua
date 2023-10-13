@@ -22,3 +22,26 @@ function DrawText3D(x, y, z, scaleX, text, r, g, b)
         DrawText(_x, _y)
     end
 end
+
+function DrawScreenText(text, position, scale, color)
+	SetTextFont(4)
+	SetTextProportional(0)
+	SetTextScale(scale.x or 0.45, scale.y or 0.45)
+	if not color then
+		SetTextColour(255, 255, 255, 255)
+	else
+		SetTextColour(color.x, color.y, color.z, color.w)
+	end
+	SetTextDropShadow(0, 0, 0, 0, 255)
+	SetTextEdge(1, 0, 0, 0, 255)
+	SetTextDropShadow()
+	SetTextOutline()
+	SetTextEntry("STRING")
+	AddTextComponentString(text)
+
+	if position then
+		DrawText(position.x, position.y)
+	else
+		DrawText(0.16, 0.793)
+	end
+end

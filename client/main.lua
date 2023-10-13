@@ -1,4 +1,9 @@
+NEX = exports['nex_core']:GetNexusObject()
+
 local kvp = Config.UseKVPInsteadDatabase and GetResourceKvpString('friendships') or false
+
+local inAdminMode = false
+local hideMe = false
 
 local FriendAPI = {}
 FriendAPI.Friends = kvp and json.decode(kvp) or {}
@@ -28,13 +33,13 @@ local areFriends = function(playerTarget)
     local result = false
 
     for _, friend in pairs(FriendAPI.Friends) do
-        if friend.source == playerTarget then
+        if friend.playerId == playerTarget then
             result = friend
             break
         end
     end
 
-    Debug(result, "Headtext: " .. (result and result.headtext or "none"))
+    --Debug(result, "Headtext: " .. (result and result.headtext or "none"))
 
     return result
 end
@@ -99,6 +104,19 @@ local pedHasMask = function(targetPed)
      return hasMask
 end
 
+local FindCacheUserByPlayerId = function(playerId)
+    local result = false
+    
+    for _, user in pairs(FriendAPI.CachePlayers) do
+        if user.playerId == playerId then
+            result = user
+            break
+        end
+    end
+
+    return result
+end
+
 RegisterNetEvent('abp_headFriend:notify', function(data) 
     lib.notify(data)
 end)
@@ -107,9 +125,6 @@ RegisterNetEvent('abp_headFriend::SyncPlayers', function(pC)
     refreshKVPList(pC)
 end)
 
-RegisterNetEvent('abp_headFriend::SyncCachePlayers', function(cachePlayers) 
-    FriendAPI.CachePlayers = cachePlayers
-end)
 
 RegisterNetEvent('abp_headFriend:OnCanceledFriendship', function(targetPlayer)
     removeFriend(targetPlayer)
@@ -131,7 +146,15 @@ if Config.EnableAdminMode then
         local success, adminModeList = lib.callback.await('abp_headFriend:tryRegisterStaffMode', false)
 
         if success then
+            inAdminMode = not inAdminMode
             FriendAPI.CurrentAdmins = adminModeList
+
+            CreateThread(function() 
+                while inAdminMode do
+                    DrawScreenText("Admin Mode", vector2(0.45, 0.9), vector2(0.5, 0.5))
+                    Wait(0)
+                end
+            end)
         end
     end, false)
 
@@ -139,7 +162,16 @@ if Config.EnableAdminMode then
         local success, adminModeList = lib.callback.await('abp_headFriend:tryRegisterHideMe', false)
 
         if success then
+            
+            hideMe = not hideMe
             FriendAPI.CurrentAdmins = adminModeList
+
+            CreateThread(function() 
+                while hideMe do
+                    DrawScreenText("ID Hided", vector2(0.45, 0.95), vector2(0.5, 0.5))
+                    Wait(0)
+                end
+            end)
         end
     end, false)
     
@@ -170,7 +202,7 @@ if Config.FriendMenu_CommandEnabled then
     -- end
 
     local refillFriendList = function()
-        
+        friendsOptions = {}
         for _, friend in pairs(FriendAPI.Friends) do
             table.insert(friendsOptions, {
                 label = friend.headtext
@@ -230,10 +262,10 @@ if Config.FriendMenu_CommandEnabled then
 
                     local targetPlayer = playerServerId
                     if not FriendAPI.Friends[targetPlayer] then
-                        local success, playerHeadText, identifier = lib.callback.await('abp_headFriend:RequestFriendship', false, targetPlayer)
+                        local success, friends = lib.callback.await('abp_headFriend:RequestFriendship', false, targetPlayer)
 
                         if success then
-                            FriendAPI.Friends[targetPlayer] = {headtext = playerHeadText, source = targetPlayer, identifier = identifier}
+                            FriendAPI.Friends = friends
 
                             if Config.UseKVPInsteadDatabase then
                                 SetResourceKvp('friendships', json.encode(FriendAPI.Friends))
@@ -477,15 +509,19 @@ CreateThread(function()
 
     while true do
 
+        FriendAPI.CachePlayers = lib.callback.await('abp_headFriend:RequestPlayersCache', 300)
+
+        Wait(1000)
+
         if FriendAPI.ShowHeadText then
             FriendAPI.NearPlayers = lib.getNearbyPlayers(GetEntityCoords(PlayerPedId()), Config.FriendAPI_HeadViewDistance, true)
         end
 
         if not Config.UseKVPInsteadDatabase then
-            FriendAPI.Friends = lib.callback.await('abp_headFriend:RequestMyFriends', 300)
+            FriendAPI.Friends = lib.callback.await('abp_headFriend:RequestMyFriends', 500)
         end
 
-        Wait(1500)
+        Wait(1000)
     end
 
 end)
@@ -506,51 +542,52 @@ CreateThread(function()
                         if targetPed ~= playerPed then
                             local playerIndex = NetworkGetPlayerIndexFromPed(targetPed)
                             local playerServerId = GetPlayerServerId(playerIndex)
-                            local cachePlayer = FriendAPI.CachePlayers[playerServerId]
-
-                            if not isPlayerAdminHide(playerServerId) then
-                                local canContinue = true
-
-                                if Config.FriendAPI_UseRaycastForWalls and not (HasEntityClearLosToEntity(playerPed, targetPed, 17) == 1) then
-                                    canContinue = false
-                                end
-
-                                if Config.HideOverheadTextInVehicle then
-                                    if (IsPedInAnyVehicle(targetPed, false)) then
+                            local cachePlayer = FindCacheUserByPlayerId(playerServerId)
+                            
+                            if cachePlayer then
+                                if not isPlayerAdminHide(playerServerId) then
+                                    local canContinue = true
+    
+                                    if Config.FriendAPI_UseRaycastForWalls and not (HasEntityClearLosToEntity(playerPed, targetPed, 17) == 1) then
                                         canContinue = false
                                     end
-                                end
-
-                                if canContinue then
-
-                                    local x2, y2, z2 = table.unpack(GetEntityCoords(targetPed, true))
-
-                                    local displayName = (Config.FriendAPI_HeadUnknownText and ((cachePlayer and Config.FriendAPI_UseCustomIdAfterHeadName) and cachePlayer.customHeadUnknownText or Translate("UNKNOWN") .. " #" .. playerServerId) or "")
-                                    local areFriends = areFriends(playerServerId)
-
-                                    if areFriends then
-                                        displayName = (areFriends.headtext or "?") .. (Config.FriendAPI_UseIdAfterHeadName and (Config.FriendAPI_UseCustomIdAfterHeadName and areFriends.customHeadtext or " #" .. playerServerId) or "")
-                                    end
-
-                                    if Config.UseMaskValidation then
-                                        if pedHasMask(targetPed) then
-                                            displayName = (Config.FriendAPI_HeadUnknownText and ((cachePlayer and Config.FriendAPI_UseCustomIdAfterHeadName) and cachePlayer.customHeadUnknownText or Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+    
+                                    if Config.HideOverheadTextInVehicle then
+                                        if (IsPedInAnyVehicle(targetPed, false)) then
+                                            canContinue = false
                                         end
                                     end
-
-                                    local _z2 = z2 + 1.1
-                                    if Config.FriendAPI_UseTalkingColor then
-                                        if NetworkIsPlayerTalking(playerIndex) then
-                                            DrawText3D(x2, y2, _z2, Config.FriendAPI_TextScale.Players, displayName, math.floor(Config.FriendAPI_TalkingColor.R), Config.FriendAPI_TalkingColor.G, Config.FriendAPI_TalkingColor.B)
+    
+                                    if canContinue then
+    
+                                        local x2, y2, z2 = table.unpack(GetEntityCoords(targetPed, true))
+                                        local displayName = (Config.FriendAPI_HeadUnknownText and ((cachePlayer and Config.FiendAPI_UseCustomHeadText) and cachePlayer.unknown or Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                        local areFriends = areFriends(playerServerId)
+    
+                                        if areFriends then
+                                            displayName =  ((Config.FiendAPI_UseCustomHeadText and areFriends.headtext or " #" .. playerServerId) or (areFriends.headtext or "?"))
+                                        end
+    
+                                        if Config.UseMaskValidation then
+                                            if pedHasMask(targetPed) then
+                                                displayName = (Config.FriendAPI_HeadUnknownText and ((cachePlayer and Config.FiendAPI_UseCustomHeadText) and cachePlayer.unknown or Translate("UNKNOWN") .. " #" .. playerServerId) or "")
+                                            end
+                                        end
+    
+                                        local _z2 = z2 + 1.1
+                                        if Config.FriendAPI_UseTalkingColor then
+                                            if NetworkIsPlayerTalking(playerIndex) then
+                                                DrawText3D(x2, y2, _z2, Config.FriendAPI_TextScale.Players, displayName, math.floor(Config.FriendAPI_TalkingColor.R), Config.FriendAPI_TalkingColor.G, Config.FriendAPI_TalkingColor.B)
+                                            else
+                                                DrawText3D(x2, y2, _z2, Config.FriendAPI_TextScale.Players, displayName, 255, 255, 255)
+                                            end
                                         else
                                             DrawText3D(x2, y2, _z2, Config.FriendAPI_TextScale.Players, displayName, 255, 255, 255)
                                         end
-                                    else
-                                        DrawText3D(x2, y2, _z2, Config.FriendAPI_TextScale.Players, displayName, 255, 255, 255)
-                                    end
-
-                                    if Config.EnableAdminMode and hasPlayerAdminText(playerServerId) then
-                                        DrawText3D(x2, y2, z2 + 1.2, Config.FriendAPI_TextScale.AdminMode, Config.AdminModeText , 255, 50, 50)
+    
+                                        if Config.EnableAdminMode and hasPlayerAdminText(playerServerId) then
+                                            DrawText3D(x2, y2, z2 + 1.2, Config.FriendAPI_TextScale.AdminMode, Config.AdminModeText , 255, 50, 50)
+                                        end
                                     end
                                 end
                             end
