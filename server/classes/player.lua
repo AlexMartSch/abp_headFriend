@@ -2,7 +2,7 @@ Player = {}
 Player.__index = Player
 
 function Player:Register(data)
-    local _data = {
+    local playerData = {
         identifier = data.identifier,
         displayname = data.displayname,
         unknown = data.unknown,
@@ -10,12 +10,12 @@ function Player:Register(data)
         friends = data.friends
     }
 
-    setmetatable(_data, self)
+    setmetatable(playerData, self)
     self.__index = self
 
     Debug('[Friends] Added player ('.. data.identifier ..') as ' .. data.displayname)
 
-    return _data
+    return playerData
 end
 
 function Player:FillFriends()
