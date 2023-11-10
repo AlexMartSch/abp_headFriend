@@ -104,9 +104,10 @@ local pedHasMask = function(targetPed)
      return hasMask
 end
 
+exports('pedHasMask', pedHasMask)
+
 local FindCacheUserByPlayerId = function(playerId)
     local result = false
-    
     for _, user in pairs(FriendAPI.CachePlayers) do
         if user.playerId == playerId then
             result = user
@@ -521,7 +522,7 @@ CreateThread(function()
             FriendAPI.Friends = lib.callback.await('abp_headFriend:RequestMyFriends', 500)
         end
 
-        Wait(1000)
+        Wait(1200)
     end
 
 end)
