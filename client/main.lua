@@ -315,7 +315,7 @@ end
 
 local function makeFriendRequest(entity)
     local targetPlayer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-    local success, playerHeadText, identifier = lib.callback.await('abp_headFriend:RequestFriendship', false, targetPlayer)
+    local success, playerHeadText, identifier = lib.callback.await('abp_headFriend:RequestFriendship', false, targetPlayer, true)
 
     if success then
         FriendAPI.Friends[targetPlayer] = {headtext = playerHeadText, source = targetPlayer, identifier = identifier}
