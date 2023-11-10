@@ -70,6 +70,8 @@ FriendAPI.AreFriend = function(from, to)
     return false
 end
 
+exports('AreFriend', FriendAPI.AreFriend)
+
 FriendAPI.SendFriendRequest = function(from, to)
     if not Config.UseKVPInsteadDatabase then
         local currentTime = os.time()
@@ -188,6 +190,10 @@ lib.callback.register('abp_headFriend:RequestMyFriends', function(source)
     
     local Player = playersCache[userIdentificator]
 
+    if not Player then
+        return {}
+    end
+
     if Config.FriendAPI_RefreshDisplayName then
         Player:UpdateHeadText()
     end
@@ -214,7 +220,7 @@ lib.callback.register('abp_headFriend:RequestMyFriends', function(source)
 end)
 
 
-lib.callback.register('abp_headFriend:RequestFriendship', function(source, playerTarget)
+lib.callback.register('abp_headFriend:RequestFriendship', function(source, playerTarget, unpackResponse)
     
     local targetId = getUserId(playerTarget)
     local localId  = getUserId(source)
@@ -283,7 +289,8 @@ lib.callback.register('abp_headFriend:RequestFriendship', function(source, playe
                     })
                 end
 
-                return true, playersCache[localId]:GetFriends()
+                if not unpackResponse then return true, playersCache[localId]:GetFriends() end
+                return true, targetHeadTxt, targetId
             end
 
             if not Config.UseKVPInsteadDatabase then
