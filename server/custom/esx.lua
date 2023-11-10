@@ -30,7 +30,11 @@ end
 
 function GetUserIdentifier(source)
     local xPlayer = ESX.GetPlayerFromId(source)
-    if not xPlayer then return source end
+
+    while not xPlayer do
+        xPlayer = ESX.GetPlayerFromId(source)
+        Wait(500)
+    end
     
     return xPlayer.identifier
 end
@@ -40,7 +44,11 @@ end
 ------------------
 function GetUserHeadName(source)
     local xPlayer = ESX.GetPlayerFromId(source)
-    if not xPlayer then return GetPlayerName(source) end
+    
+    while not xPlayer do
+        xPlayer = ESX.GetPlayerFromId(source)
+        Wait(500)
+    end
     
     return xPlayer.getName()
 end
