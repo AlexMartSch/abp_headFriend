@@ -1,4 +1,5 @@
-NEX = exports['nex_core']:GetNexusObject()
+-- Ignore this line, dev purpose
+--NEX = exports['nex_core']:GetNexusObject()
 
 local kvp = Config.UseKVPInsteadDatabase and GetResourceKvpString('friendships') or false
 
