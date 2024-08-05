@@ -50,7 +50,10 @@ end
 -- In this function you can set it to fetch the player id, for example if you have an id corresponding to "#abc123" then you should use some function to get the player id and it will be displayed overhead.
 ------------------
 function GetCustomHeadText(playerId)
-    return GetPlayerName(playerId) .. " | " .. tostring(math.random(1000, 9999))
+    local xPlayer = QBCORE.Functions.GetPlayer(source)
+    if not xPlayer then GetPlayerName(source) end
+
+    return xPlayer.PlayerData.charinfo.firstname .. " " .. xPlayer.PlayerData.charinfo.lastname
 end
 
 
