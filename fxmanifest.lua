@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 
 author 'AlexBanPer'
-version '1.4.0'
+version '1.5'
 game 'gta5'
 
 lua54 'yes'
