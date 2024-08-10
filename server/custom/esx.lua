@@ -21,7 +21,7 @@ ESX = exports['es_extended']:getSharedObject()
 
 ]]
 
-function isAdmin(source)
+function IsAdmin(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     if not xPlayer then return false end
 
@@ -42,26 +42,22 @@ end
 -------------------------------
 --  If you do NOT want to use the Steam name as an overhead display, then manually set what you want to display.
 ------------------
-function GetUserHeadName(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
+function GetUserHeadName(playerId)
+    local xPlayer = ESX.GetPlayerFromId(playerId)
+    if not xPlayer then GetPlayerName(playerId) end
     
-    while not xPlayer do
-        xPlayer = ESX.GetPlayerFromId(source)
-        Wait(500)
-    end
-    
-    return xPlayer.getName()
+    return GetCustomHeadText(playerId)
 end
 
 -------------------------------
 -- In this function you can set it to fetch the player id, for example if you have an id corresponding to "#abc123" then you should use some function to get the player id and it will be displayed overhead.
 function GetCustomHeadText(playerId)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local xPlayer = ESX.GetPlayerFromId(playerId)
 
-    return xPlayer.getName() .. " |~b~ [ID:" .. tostring(playerId) .. "]"
+    local display = ("%s [%s]"):format(xPlayer.getName(), source) 
+    return display
 end
 
----- WIP
 function GetCustomUnknownHeadText(playerId)
     return Translate("UNKNOWN") .. " | " .. tostring(playerId)
 end

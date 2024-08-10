@@ -21,8 +21,8 @@ QBCORE = exports['qb-core']:GetCoreObject()
 
 ]]
 
-function isAdmin(source)
-    return false
+function IsAdmin(playerId)
+    return QBCORE.Functions.HasPermission(playerId, 'admin')
 end
 
 -------------------------------
@@ -37,23 +37,24 @@ function GetUserIdentifier(source)
 end
 
 -------------------------------
---  If you do NOT want to use the Steam name as an overhead display, then manually set what you want to display.
+--  If you do NOT want to use the Steam name as friend request, then manually set what you want to display.
 ------------------
-function GetUserHeadName(source)
-    local xPlayer = QBCORE.Functions.GetPlayer(source)
+function GetUserHeadName(playerId)
+    local xPlayer = QBCORE.Functions.GetPlayer(playerId)
     if not xPlayer then GetPlayerName(source) end
 
-    return xPlayer.PlayerData.charinfo.firstname .. " " .. xPlayer.PlayerData.charinfo.lastname
+    return GetCustomHeadText(playerId)
 end
 
 -------------------------------
 -- In this function you can set it to fetch the player id, for example if you have an id corresponding to "#abc123" then you should use some function to get the player id and it will be displayed overhead.
 ------------------
 function GetCustomHeadText(playerId)
-    local xPlayer = QBCORE.Functions.GetPlayer(source)
-    if not xPlayer then GetPlayerName(source) end
+    local xPlayer = QBCORE.Functions.GetPlayer(playerId)
+    if not xPlayer then GetPlayerName(playerId) end
 
-    return xPlayer.PlayerData.charinfo.firstname .. " " .. xPlayer.PlayerData.charinfo.lastname
+    local display = ("%s %s [%s]"):format(xPlayer.PlayerData.charinfo.firstname, xPlayer.PlayerData.charinfo.lastname, playerId)
+    return display
 end
 
 
