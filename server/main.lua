@@ -41,12 +41,12 @@ local checkIfAdmin = function(source)
         end
 
         if not hasAccess then
-            return isAdmin(source)
+            return IsAdmin(source)
         end
 
         return hasAccess
     else
-        return isAdmin(source)
+        return IsAdmin(source)
     end
 end
 
@@ -345,9 +345,7 @@ CreateThread(function()
 
         CreateThread(function() 
             while true do
-
                 TriggerClientEvent('abp_headFriend::SyncPlayers', -1, playersCache)
-                
                 Wait(Config.SyncKVPToClient * 1000)
             end
         end)
